@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="fa" dir="rtl"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>perso-match — جست‌وجوی فارسی و عربی</title>
+<style>
+:root{color-scheme:dark;font-family:Tahoma,system-ui,sans-serif;background:#0c1424;color:#e9efff}body{max-width:960px;margin:5vh auto;padding:24px}header small{color:#7ae0c3;letter-spacing:.12em}h1{font-size:clamp(25px,5vw,44px);line-height:1.5;margin:16px 0}p{color:#bac7e0;line-height:1.9}.controls{display:flex;flex-wrap:wrap;gap:16px;align-items:center}input[type=search]{box-sizing:border-box;width:100%;padding:18px;border:1px solid #49607f;border-radius:14px;background:#142239;color:inherit;font:inherit;font-size:22px}select{padding:10px;background:#142239;color:inherit;border:1px solid #49607f;border-radius:8px}.cards{display:grid;gap:14px;margin-top:24px}.card{padding:22px;border:1px solid #2c405d;border-radius:16px;background:#132137}.card .text{font-size:22px;line-height:1.8}.key{font:13px ui-monospace,monospace;color:#9baec9;margin-top:12px;overflow-wrap:anywhere}mark{background:#9cf0d4;color:#062e24;border-radius:4px;padding:2px}#status{padding:18px 0;color:#7ae0c3}.note{border-top:1px solid #2c405d;margin-top:32px;padding-top:18px}code{direction:ltr;unicode-bidi:isolate}a{color:#7ae0c3}
+</style>
+<header><small dir="ltr">PERSO-MATCH / LIVE DEMO</small><h1>متن همان است.<br>جست‌وجو بهتر می‌فهمد.</h1><p>«کالا 123»، «محمد» یا «می روم» را امتحان کنید. نتیجه روی حروف و ارقام اصلی مشخص می‌شود.</p></header>
+<input type="search" id="query" value="کالا 123" aria-label="عبارت جست‌وجو">
+<div class="controls"><label>زبان <select id="locale"><option value="fa">فارسی</option><option value="ar">العربية</option></select></label><label><input id="compact" type="checkbox"> نادیده‌گرفتن همه فاصله‌ها</label><label><input id="alef" type="checkbox"> یکسان‌کردن أ، إ، آ، ا</label></div>
+<div id="status" role="status"></div><div class="cards" id="results"></div>
+<p class="note">این دمو فقط داخل مرورگر اجرا می‌شود و هیچ متن جست‌وجویی ارسال نمی‌کند. حذف فاصله‌ها و یکسان‌کردن الف می‌تواند نتیجه‌های اضافی ایجاد کند. متن اصلی تغییر نمی‌کند.</p>
+<p><a href="https://github.com/farhad-arjmand/perso-match">کد و راهنمای استفاده</a></p>
+<script type="module">
+import {createMatcher} from '../dist/esm/index.js';
+const records=['📦 كالا ۱۲۳ — موجود در انبار','📦 کالا ١٢٣ — ارسال فردا','مرحباً يا مُحَمَّد','سلام علی؛ نامه برای علي','من هر روز می‌روم','من هر روز می روم','من هر روز میروم','أحمد و احمد','👩‍💻 برنامه‌نویس فارسی و العربية','این متن شامل ﻻ و لا است'];
+const q=document.querySelector('#query'),locale=document.querySelector('#locale'),compact=document.querySelector('#compact'),alef=document.querySelector('#alef'),results=document.querySelector('#results'),status=document.querySelector('#status');
+function render(){const m=createMatcher({locale:locale.value,spacing:compact.checked?'compact':'collapse',alef:alef.checked?'fold':'preserve'});results.replaceChildren();let count=0;for(const original of records){const parts=m.parts(original,q.value);if(m.key(q.value)&&!parts.some(p=>p.match))continue;count++;const card=document.createElement('article');card.className='card';const text=document.createElement('div');text.className='text';for(const p of parts){const el=document.createElement(p.match?'mark':'span');el.textContent=p.text;text.append(el);}const key=document.createElement('div');key.className='key';key.textContent='کلید جست‌وجو: '+m.key(original);card.append(text,key);results.append(card);}status.textContent=`${count} نتیجه — متن اصلی حفظ شده است`;}
+for(const element of [q,locale,compact,alef])element.addEventListener('input',render);
+render();
+</script></html>

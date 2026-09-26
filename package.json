@@ -1,0 +1,69 @@
+{
+  "name": "perso-match",
+  "version": "1.0.0",
+  "description": "Persian and Arabic search keys with original-text highlight ranges and collision audits. Match Unicode variants without rewriting your data.",
+  "type": "module",
+  "main": "./dist/cjs/index.js",
+  "types": "./dist/esm/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/esm/index.d.ts",
+        "default": "./dist/esm/index.js"
+      },
+      "require": {
+        "types": "./dist/cjs/index.d.ts",
+        "default": "./dist/cjs/index.js"
+      }
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE",
+    "README.fa.md",
+    "README.ar.md"
+  ],
+  "sideEffects": false,
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "test": "npm run build && node --test test/*.test.mjs",
+    "test:types": "tsc --noEmit --strict --module NodeNext --moduleResolution NodeNext --target ES2022 test/types.mts test/types.cts",
+    "check": "npm test && npm run test:types",
+    "test:package": "node scripts/smoke-pack.mjs",
+    "prepack": "npm run build",
+    "demo": "npm run build && node examples/search.mjs"
+  },
+  "keywords": [
+    "persian",
+    "farsi",
+    "arabic",
+    "search",
+    "unicode",
+    "normalization",
+    "highlight",
+    "zwnj",
+    "database",
+    "typescript"
+  ],
+  "license": "MIT",
+  "author": "Farhad Arjmand",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/farhad-arjmand/perso-match.git"
+  },
+  "bugs": {
+    "url": "https://github.com/farhad-arjmand/perso-match/issues"
+  },
+  "homepage": "https://github.com/farhad-arjmand/perso-match#readme",
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "devDependencies": {
+    "typescript": "7.0.2"
+  }
+}
