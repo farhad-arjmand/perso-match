@@ -1,7 +1,7 @@
 {
   "name": "perso-match",
-  "version": "1.0.0",
-  "description": "Persian and Arabic search keys with original-text highlight ranges and collision audits. Match Unicode variants without rewriting your data.",
+  "version": "1.1.0",
+  "description": "Persian and Arabic search normalization with original-text highlight ranges, prepared queries and database collision audits. Farsi letters, digits and half-spaces.",
   "type": "module",
   "main": "./dist/cjs/index.js",
   "types": "./dist/esm/index.d.ts",
@@ -22,7 +22,13 @@
     "README.md",
     "LICENSE",
     "README.fa.md",
-    "README.ar.md"
+    "README.ar.md",
+    "docs",
+    "examples",
+    "llms.txt",
+    "CHANGELOG.md",
+    "CONTRIBUTING.md",
+    "SECURITY.md"
   ],
   "sideEffects": false,
   "engines": {
@@ -35,16 +41,19 @@
     "check": "npm test && npm run test:types",
     "test:package": "node scripts/smoke-pack.mjs",
     "prepack": "npm run build",
-    "demo": "npm run build && node examples/search.mjs"
+    "demo": "npm run build && node examples/search.mjs",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "keywords": [
     "persian",
     "farsi",
     "arabic",
-    "search",
+    "rtl",
     "unicode",
-    "normalization",
+    "search",
     "highlight",
+    "normalization",
     "zwnj",
     "database",
     "typescript"
@@ -64,6 +73,7 @@
     "registry": "https://registry.npmjs.org/"
   },
   "devDependencies": {
+    "prettier": "3.9.9",
     "typescript": "7.0.2"
   }
 }

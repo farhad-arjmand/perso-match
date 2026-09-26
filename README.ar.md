@@ -7,9 +7,9 @@ npm install perso-match
 ```
 
 ```ts
-import { createMatcher } from 'perso-match';
-const matcher = createMatcher({ locale: 'ar' });
-const parts = matcher.parts('مرحباً يا مُحَمَّد', 'محمد');
+import { createMatcher } from "perso-match";
+const matcher = createMatcher({ locale: "ar" });
+const parts = matcher.parts("مرحباً يا مُحَمَّد", "محمد");
 // الجزء المطابق يحتوي على «مُحَمَّد» كما وردت في النص الأصلي.
 ```
 
@@ -22,3 +22,7 @@ const parts = matcher.parts('مرحباً يا مُحَمَّد', 'محمد');
 المكتبة لا تنشئ HTML. اعرض الأجزاء باستخدام `textContent` أو آلية الهروب الافتراضية في إطار الواجهة. المواضع هي إزاحات UTF-16 مناسبة للدالة `String.slice` في JavaScript.
 
 [المرجع الكامل والحدود](README.md) · [مثال SQLite](examples/database.mjs)
+
+## الترقية إلى 1.1
+
+يستخدم الإصدار 1.1 ملف الخوارزمية `perso-match/v2` بعد إصلاح تركيب الهمزة عند حذف المحارف غير المرئية وتوحيد الحروف. أعد توليد المفاتيح المخزنة من **النص الأصلي** وحدّث المفتاح والملف معاً. للبحث المتكرر في نص ثابت، استخدم `matcher.prepare(text)` لإعادة استخدام خريطة المواضع.

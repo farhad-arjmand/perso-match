@@ -12,13 +12,17 @@ Persian and Arabic search keys, original-text highlight ranges, and collision au
 
 Zero runtime dependencies · TypeScript · ESM + CommonJS · Node.js 20+ · Modern browsers
 
-[راهنمای فارسی](README.fa.md) · [العربية](README.ar.md)
+[راهنمای فارسی](https://github.com/farhad-arjmand/perso-match/blob/main/README.fa.md) · [العربية](https://github.com/farhad-arjmand/perso-match/blob/main/README.ar.md)
 
 </div>
 
 ```sh
 npm install perso-match
 ```
+
+## Integration recipes and tool-readable reference
+
+See [integration recipes](https://github.com/farhad-arjmand/perso-match/blob/main/docs/integration.md) for runnable patterns and selection criteria, [release notes](https://github.com/farhad-arjmand/perso-match/blob/main/CHANGELOG.md) for changes, and [llms.txt](https://github.com/farhad-arjmand/perso-match/blob/main/llms.txt) for a compact API index. The reference is ordinary documentation for developers and coding assistants; it does not require or guarantee automatic recommendations.
 
 ## The real problem
 
@@ -29,36 +33,36 @@ Replacing characters helps comparison, but it creates another problem: the norma
 `perso-match` keeps a mapping back to the original grapheme spans. Store the original, search a derived key, and display the original result.
 
 ```ts
-import { createMatcher } from 'perso-match';
+import { createMatcher } from "perso-match";
 
-const fa = createMatcher({ locale: 'fa' });
-const original = '📦 كالا ۱۲۳ برای علي';
+const fa = createMatcher({ locale: "fa" });
+const original = "📦 كالا ۱۲۳ برای علي";
 
 fa.key(original); // '📦 کالا 123 برای علی'
 
-const ranges = fa.find(original, 'کالا 123');
+const ranges = fa.find(original, "کالا 123");
 original.slice(ranges[0].start, ranges[0].end); // 'كالا ۱۲۳'
 
-const ar = createMatcher({ locale: 'ar' });
-ar.parts('مرحباً يا مُحَمَّد', 'محمد');
+const ar = createMatcher({ locale: "ar" });
+ar.parts("مرحباً يا مُحَمَّد", "محمد");
 // Plain text parts; the matched part contains the ORIGINAL 'مُحَمَّد'.
 ```
 
 ## What matches by default?
 
-| Inputs | Result |
-| --- | --- |
-| `علي` / `علی` | Equal key in either locale |
-| `كتاب` / `کتاب` | Equal key in either locale |
-| `۱۲۳` / `١٢٣` / `123` | Equal key; digits stay strings |
-| `مُحَمَّد` / `محمد` | Equal key |
-| `کــتاب` / `کتاب` | Equal key |
-| `می‌روم` / `می روم` | Equal key |
-| `می‌روم` / `میروم` | Different by default; equal with `spacing: 'compact'` |
-| `أمل` / `امل` | Different unless `alef: 'fold'` |
-| `على` / `علي` | Different unless `foldMaqsura: true` |
-| `مدرسة` / `مدرسه` | Always different |
-| `مسؤول` / `مسوول` | Different; hamza is preserved |
+| Inputs                | Result                                                |
+| --------------------- | ----------------------------------------------------- |
+| `علي` / `علی`         | Equal key in either locale                            |
+| `كتاب` / `کتاب`       | Equal key in either locale                            |
+| `۱۲۳` / `١٢٣` / `123` | Equal key; digits stay strings                        |
+| `مُحَمَّد` / `محمد`   | Equal key                                             |
+| `کــتاب` / `کتاب`     | Equal key                                             |
+| `می‌روم` / `می روم`   | Equal key                                             |
+| `می‌روم` / `میروم`    | Different by default; equal with `spacing: 'compact'` |
+| `أمل` / `امل`         | Different unless `alef: 'fold'`                       |
+| `على` / `علي`         | Different unless `foldMaqsura: true`                  |
+| `مدرسة` / `مدرسه`     | Always different                                      |
+| `مسؤول` / `مسوول`     | Different; hamza is preserved                         |
 
 Choose `locale: 'fa'` or `locale: 'ar'` explicitly. This selects yeh/kaf output forms; it does not detect language or claim to support every language using Arabic script.
 
@@ -67,16 +71,20 @@ Choose `locale: 'fa'` or `locale: 'ar'` explicitly. This selects yeh/kaf output 
 The library returns strings and offsets, never HTML. With React:
 
 ```tsx
-const matcher = createMatcher({ locale: 'fa' });
+const matcher = createMatcher({ locale: "fa" });
 
 function SearchLabel({ text, query }: { text: string; query: string }) {
   return (
     <span dir="auto">
-      {matcher.parts(text, query).map(part =>
-        part.match
-          ? <mark key={part.start}>{part.text}</mark>
-          : <span key={part.start}>{part.text}</span>
-      )}
+      {matcher
+        .parts(text, query)
+        .map((part) =>
+          part.match ? (
+            <mark key={part.start}>{part.text}</mark>
+          ) : (
+            <span key={part.start}>{part.text}</span>
+          ),
+        )}
     </span>
   );
 }
@@ -89,7 +97,7 @@ Offsets use JavaScript **UTF-16 code units**, end-exclusive, so `original.slice(
 ## Database integration: keep the original and a separate key
 
 ```ts
-const matcher = createMatcher({ locale: 'fa' });
+const matcher = createMatcher({ locale: "fa" });
 
 const row = {
   display_name: userInput,
@@ -108,14 +116,14 @@ WHERE search_profile = ? AND search_key = ?;
 
 Bind `matcher.profile` and `matcher.key(query)` as parameters. Use an exact/binary column collation when you need equality to follow this package's policy; a database collation may otherwise introduce additional equivalences.
 
-The runnable [SQLite example](examples/database.mjs) inserts both `علي` and `علی`, looks them up through an index, verifies both records are found and keeps their display names unchanged. It requires Node.js 22.13+ for built-in SQLite; the library itself needs Node.js 20+.
+The runnable [SQLite example](https://github.com/farhad-arjmand/perso-match/blob/main/examples/database.mjs) inserts both `علي` and `علی`, looks them up through an index, verifies both records are found and keeps their display names unchanged. It requires Node.js 22.13+ for built-in SQLite; the library itself needs Node.js 20+.
 
 A B-tree index helps exact-key lookup; it does not make arbitrary substring searches fast. For large text collections, store these keys in your search engine and use the original text for highlights. `find()` is a literal in-memory substring matcher, not a full-text index or ranking engine.
 
 ### Audit collisions before migration
 
 ```ts
-const candidates = matcher.collisions(existingRows, row => row.display_name);
+const candidates = matcher.collisions(existingRows, (row) => row.display_name);
 // [{ key, items: originalRows, distinctTexts: originalStrings }, ...]
 ```
 
@@ -125,56 +133,71 @@ Two names with the same search key do **not** prove they belong to the same pers
 
 Persist `matcher.profile` alongside keys. A different configuration requires a separate index or reindexing. Pin the package and runtime in your key-generation pipeline; test/rebuild indexes when either changes. Grapheme segmentation and Unicode support come from the runtime.
 
+## Repeated queries and upgrading from 1.0.0
+
+For autocomplete or filtering an unchanged list, prepare each text once:
+
+```ts
+const label = matcher.prepare("📦 كالا ۱۲۳");
+label.find("کالا");
+label.parts("123");
+```
+
+Prepared objects retain an offset map, so dispose of them when records change or leave the view. They do not contain a search index: searching many prepared records still scans those records.
+
+Version 1.1.0 uses the `perso-match/v2` algorithm profile. It fixes canonical composition across deleted controls/tatweel and after yeh folding. For example, `اـٔ` now produces the same stable key as `أ`. Recompute stored search keys and their profiles together when upgrading; do not silently query v1 rows using a v2 profile. See [migration details](https://github.com/farhad-arjmand/perso-match/blob/main/docs/integration.md).
+
 ## Half-spaces and aggressive matching
 
 Default `joiners: 'space'` treats ZWNJ (`U+200C`) as a word separator:
 
 ```ts
-createMatcher({ locale: 'fa' }).key('می‌روم'); // 'می روم'
+createMatcher({ locale: "fa" }).key("می‌روم"); // 'می روم'
 ```
 
 To match joined, half-spaced and spaced spellings:
 
 ```ts
-const compact = createMatcher({ locale: 'fa', spacing: 'compact' });
-compact.key('می‌روم') === compact.key('می روم'); // true
-compact.key('می روم') === compact.key('میروم');  // true
+const compact = createMatcher({ locale: "fa", spacing: "compact" });
+compact.key("می‌روم") === compact.key("می روم"); // true
+compact.key("می روم") === compact.key("میروم"); // true
 ```
 
 This removes **all** whitespace, so it can also match across unrelated word boundaries (`کار گر` / `کارگر`). Use it for candidate retrieval, with visible original results. ZWJ (`U+200D`) is preserved, including inside emoji.
 
 ## Options
 
-| Option | Default | Policy |
-| --- | --- | --- |
-| `locale` | Required | `fa` → Persian ی/ک; `ar` → Arabic ي/ك |
-| `joiners` | `space` | ZWNJ becomes a space, is removed (`remove`), or retained (`keep`) |
-| `spacing` | `collapse` | Trim/collapse whitespace, or remove it all (`compact`) |
-| `marks` | `ignore` | Ignore U+064B–U+0652 and U+0670, or retain with `keep` |
-| `alef` | `preserve` | Optional `fold` maps أ إ آ ٱ to ا |
-| `foldMaqsura` | `false` | Optional ى → locale's yeh |
-| `asciiCaseInsensitive` | `true` | Fold ASCII A–Z only |
-| `directionMarks` | `ignore` | Ignore U+061C, U+200E/F, U+202A–E, U+2066–9, or retain with `keep` |
+| Option                 | Default    | Policy                                                             |
+| ---------------------- | ---------- | ------------------------------------------------------------------ |
+| `locale`               | Required   | `fa` → Persian ی/ک; `ar` → Arabic ي/ك                              |
+| `joiners`              | `space`    | ZWNJ becomes a space, is removed (`remove`), or retained (`keep`)  |
+| `spacing`              | `collapse` | Trim/collapse whitespace, or remove it all (`compact`)             |
+| `marks`                | `ignore`   | Ignore U+064B–U+0652 and U+0670, or retain with `keep`             |
+| `alef`                 | `preserve` | Optional `fold` maps أ إ آ ٱ to ا                                  |
+| `foldMaqsura`          | `false`    | Optional ى → locale's yeh                                          |
+| `asciiCaseInsensitive` | `true`     | Fold ASCII A–Z only                                                |
+| `directionMarks`       | `ignore`   | Ignore U+061C, U+200E/F, U+202A–E, U+2066–9, or retain with `keep` |
 
 Tatweel is always removed from keys. Arabic presentation forms receive NFKC compatibility expansion; ordinary text receives NFC. Other-script compatibility characters are not deliberately compatibility-folded. Punctuation, ta marbuta, hamza letters and Latin accents remain distinct by default. This is not a complete Quranic annotation remover or a spelling corrector.
 
 ## API
 
 ```ts
-const matcher = createMatcher({ locale: 'fa' });
-matcher.profile;                 // algorithm + option profile identifier
-matcher.key(text);               // comparison/index string
-matcher.map(text);               // { key, ranges: Range[] }
-matcher.find(text, query);        // Range[] into ORIGINAL text
-matcher.parts(text, query);       // { text, match, start, end }[]
-matcher.collisions(rows, getText);// Collision<T>[]
+const matcher = createMatcher({ locale: "fa" });
+matcher.profile; // algorithm + option profile identifier
+matcher.key(text); // comparison/index string
+matcher.prepare(text); // reuse normalization for repeated queries
+matcher.map(text); // { key, ranges: Range[] }
+matcher.find(text, query); // Range[] into ORIGINAL text
+matcher.parts(text, query); // { text, match, start, end }[]
+matcher.collisions(rows, getText); // Collision<T>[]
 ```
 
 `map().ranges` has one entry per UTF-16 code unit of the normalized key. Multiple entries can point to the same original grapheme. `key()` avoids allocating that offset map.
 
 `find` and `parts` accept `{ limit }`: default `100`, maximum `10000`. This caps normalized nonoverlapping matches; merged ligature spans can produce fewer returned ranges. Empty normalized queries return no matches. An empty original string produces no parts.
 
-Inputs must be strings of at most 1,048,576 UTF-16 code units. Invalid options and types throw; overlarge inputs or invalid limits throw `RangeError`. Calls are synchronous. Collision audits retain groups in memory; batch large migrations. No filesystem or network access occurs.
+Inputs must be strings of at most 1,048,576 UTF-16 code units. Invalid options and types throw; overlarge inputs or invalid limits throw `RangeError`. Calls are synchronous. Collision audits retain groups in memory. For large migrations, persist derived keys and group across the complete dataset in the database. Separate audit calls cannot detect collisions across batches. No filesystem or network access occurs.
 
 CommonJS: `const { createMatcher } = require('perso-match')`.
 
@@ -200,4 +223,4 @@ Tools such as [Virastar](https://github.com/brothersincode/virastar) address Per
 
 [Unicode grapheme segmentation](https://www.unicode.org/reports/tr29/) informs source-span handling.
 
-MIT © Farhad Arjmand · [Contributing](CONTRIBUTING.md) · [Security](SECURITY.md)
+MIT © Farhad Arjmand · [Contributing](https://github.com/farhad-arjmand/perso-match/blob/main/CONTRIBUTING.md) · [Security](https://github.com/farhad-arjmand/perso-match/blob/main/SECURITY.md)

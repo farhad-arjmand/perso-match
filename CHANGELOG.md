@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.1.0 — 2026-09-27
+
+- Fix canonical composition across removed characters and after letter folding.
+- Advance persisted key profile to v2; recompute v1 keys from original text when upgrading.
+- Add prepare(text) for repeated queries with reusable normalization/offset mapping.
+- Include migration guidance, executable recipes and tool-readable reference.
+
 ## 1.0.0 — 2026-09-27
 
 - Explicit Persian and Arabic search profiles with yeh/kaf and numeral folding.

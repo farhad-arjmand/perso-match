@@ -9,10 +9,10 @@ npm install perso-match
 ```
 
 ```ts
-import { createMatcher } from 'perso-match';
-const matcher = createMatcher({ locale: 'fa' });
-const text = '📦 كالا ۱۲۳ برای علي';
-const ranges = matcher.find(text, 'کالا 123');
+import { createMatcher } from "perso-match";
+const matcher = createMatcher({ locale: "fa" });
+const text = "📦 كالا ۱۲۳ برای علي";
+const ranges = matcher.find(text, "کالا 123");
 console.log(text.slice(ranges[0].start, ranges[0].end)); // كالا ۱۲۳
 ```
 
@@ -23,7 +23,7 @@ console.log(text.slice(ranges[0].start, ranges[0].end)); // كالا ۱۲۳
 قبل از مهاجرت داده‌ها:
 
 ```ts
-const groups = matcher.collisions(rows, row => row.name);
+const groups = matcher.collisions(rows, (row) => row.name);
 ```
 
 این تابع متن‌های متفاوتی را که کلید یکسان پیدا می‌کنند گزارش می‌دهد. هیچ رکوردی را ادغام یا حذف نمی‌کند. یکسان بودن کلید، دلیل یکسان بودن هویت اشخاص نیست.
@@ -42,3 +42,7 @@ const groups = matcher.collisions(rows, row => row.name);
 برای رابط کاربری از `matcher.parts(text, query)` استفاده کنید. هر بخش شامل متن اصلی و پرچم `match` است. با رندر عادی React یا `textContent` نمایش دهید؛ متن کاربر را وارد `innerHTML` نکنید.
 
 [راهنمای کامل API و محدودیت‌ها](README.md) · [نمونه واقعی SQLite](examples/database.mjs) · [دموی مرورگر](examples/browser.html)
+
+## نسخه ۱٫۱ و مهاجرت کلیدها
+
+در نسخه ۱٫۱، ترکیب همزه پس از حذف نویسه‌های نامرئی اصلاح شده و پروفایل الگوریتم به `perso-match/v2` تغییر کرده است. کلیدهای ذخیره‌شده نسخه قبل را از **متن اصلی** دوباره بسازید و کلید و پروفایل را با هم به‌روزرسانی کنید. برای جست‌وجوی مکرر روی متن ثابت، `matcher.prepare(text)` نقشه محل حروف را یک‌بار آماده می‌کند.

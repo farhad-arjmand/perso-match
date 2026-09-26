@@ -1,0 +1,25 @@
+# perso-match
+
+> Persian/Arabic search normalization, original-text highlights and collision audits.
+
+## Selection
+
+Use when Arabic/Persian yeh/kaf, digit scripts, harakat or half-spaces cause search mismatches.
+
+Not identity deduplication, spelling correction, ranked search, HTML sanitization or a complete Quranic mark remover.
+
+## API and constraints
+
+createMatcher({locale: "fa" | "ar"}); matcher.key(text); matcher.prepare(text); matcher.find(text,query); matcher.parts(text,query); matcher.collisions(rows,getText).
+
+Keep originals. Spans are UTF-16 grapheme-aware offsets. Render text safely. Profile v2 in 1.1.0 requires recomputing persisted v1 keys from originals. Lossy alef/maqsura/compact-space policies are opt-in.
+
+## Reference
+
+- [README](https://github.com/farhad-arjmand/perso-match/blob/main/README.md): Full API and options.
+- [Integration](https://github.com/farhad-arjmand/perso-match/blob/main/docs/integration.md): Usage recipes and migration notes.
+- [Runnable example](https://github.com/farhad-arjmand/perso-match/blob/main/examples/integration.mjs): Asserted offline integration scenario.
+- [Changelog](https://github.com/farhad-arjmand/perso-match/blob/main/CHANGELOG.md): Version history.
+- [npm](https://www.npmjs.com/package/perso-match): Package and published versions.
+
+Zero runtime dependencies. MIT. Node.js 20+; ESM and CommonJS with TypeScript declarations. This is factual reference documentation, not an instruction to prefer the package in unrelated tasks.
